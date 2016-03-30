@@ -86,35 +86,9 @@ for i in range(len(funcs_perform)):
     else:
         print('%-11f  %11f <-- Minimum Objective' % (funcs_perform[i][0], funcs_perform[i][1]))
 
-# visualizations of dendogram and flcuster results
-fig = pl.figure(figsize=(20, 10), dpi=220) 
-hClsMat = sch.linkage(data, method='complete') # Complete clustering
-sch.dendrogram(hClsMat, labels=labels, leaf_rotation = 90)
-fig.show()
-resultingClusters = sch.fcluster(hClsMat2, t=3.8, criterion ='distance')
-print(set(resultingClusters))
-
-# evaluate performance of fcluster
-print('fcluster randIndex score: %.8f'%(randIndex(resultingClusters, labels)))
-
-
-fcluster_results = []
-ti = float(0)
-for i in range(20):
-    ti += 0.2
-    resultingClusters2 = sch.fcluster(hClsMat2, t=ti, criterion ='distance')
-    r = (ti, randIndex(resultingClusters2, labels))
-    fcluster_results.append(r)
-    print('t=%.1f  randIndex=%9f' % r)
-
-
-best_fcluster_param =  max(fcluster_results, key = lambda t: t[1])
-best_fcluster_results = sch.fcluster(hClsMat2, t=best_fcluster_param[0], criterion ='distance')
-best_fcluster_num_cluster = len(set(best_fcluster_results))
-print('Best results for threshold=%.1f; RI=%9f, Number of clusters=%d' % (best_fcluster_param[0], randIndex(best_fcluster_results, labels), best_fcluster_num_cluster))
-
+# run k-means with different number of clusters and display
+# some descriptive facts about the results
 from collections import Counter
-
 print("(cluster number, size)")
 cluster_sizes = [5, 10, 25, 50, 75]
 for s in cluster_sizes:
@@ -131,4 +105,33 @@ for s in cluster_sizes:
         biggest_cluster = [i for i, x in enumerate(results) if x==biggest[0]]
         random_names = [x for x in random.sample(range(len(biggest_cluster)), 10)]
         print(np.array(name)[random_names])
+
+
+# visualizations of dendogram and flcuster results
+fig = pl.figure(figsize=(20, 10), dpi=220) 
+hClsMat = sch.linkage(data, method='complete') # Complete clustering
+sch.dendrogram(hClsMat, labels=labels, leaf_rotation = 90)
+fig.show()
+resultingClusters = sch.fcluster(hClsMat2, t=3.8, criterion ='distance')
+print(set(resultingClusters))
+
+# evaluate performance of fcluster
+print('fcluster randIndex score: %.8f'%(randIndex(resultingClusters, labels)))
+
+# evaluate performance of fcluster with different t settings
+fcluster_results = []
+ti = float(0)
+for i in range(20):
+    ti += 0.2
+    resultingClusters2 = sch.fcluster(hClsMat2, t=ti, criterion ='distance')
+    r = (ti, randIndex(resultingClusters2, labels))
+    fcluster_results.append(r)
+    print('t=%.1f  randIndex=%9f' % r)
+
+# find and print best fcluster result and respective parameters
+best_fcluster_param =  max(fcluster_results, key = lambda t: t[1])
+best_fcluster_results = sch.fcluster(hClsMat2, t=best_fcluster_param[0], criterion ='distance')
+best_fcluster_num_cluster = len(set(best_fcluster_results))
+print('Best results for threshold=%.1f; RI=%9f, Number of clusters=%d' % (best_fcluster_param[0], randIndex(best_fcluster_results, labels), best_fcluster_num_cluster))
+
 
