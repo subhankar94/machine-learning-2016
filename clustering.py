@@ -27,12 +27,10 @@ data = np.array(data, dtype='float')
 # normalize features
 data_min = data.min(axis=0)
 data_max = data.max(axis=0)
-
 for i in range(len(data)):
     for j in range(len(data[0])):
         if data[i][j] != 0:
             data[i][j] = ((data[i][j]-data_min[j])/(data_max[j]-data_min[j]))
-
 
 # set up and run clustering algorithm with 4 clusters
 km = KMeans(n_clusters = 4)
